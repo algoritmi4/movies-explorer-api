@@ -61,6 +61,11 @@ function updateCurrentUser(req, res, next) {
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+        return;
+      }
+
       if (err.name === 'CastError') {
         next(new NotFoundError('Пользователь с указанным id не найден'));
         return;
