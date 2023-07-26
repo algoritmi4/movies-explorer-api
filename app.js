@@ -8,8 +8,6 @@ const bodyParser = require('body-parser');
 
 const helmet = require('helmet');
 
-const rateLimit = require('express-rate-limit');
-
 const cors = require('cors');
 
 const { Joi, celebrate, errors } = require('celebrate');
@@ -24,19 +22,13 @@ const { requestLogger, errorLogger } = require('./middlewares/loggers');
 
 const { login, createUser, signOut } = require('./controllers/users');
 
+const limiter = require('./middlewares/limiter');
+
 const NotFoundError = require('./customErrors/NotFoundError');
 
 const { PORT = 3001, DB_URL = 'mongodb://0.0.0.0:27017/bitfilmsdb' } = process.env;
 
 const app = express();
-
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests created from this IP, please try again after 10 min',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
@@ -49,8 +41,7 @@ mongoose.connect(DB_URL);
 app.use(requestLogger);
 app.use(limiter);
 
-app.use('/users', auth, require('./routes/users'));
-app.use('/movies', auth, require('./routes/movies'));
+app.use('/', auth, require('./routes/index'));
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
