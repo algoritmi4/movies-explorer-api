@@ -41,8 +41,6 @@ mongoose.connect(DB_URL);
 app.use(requestLogger);
 app.use(limiter);
 
-app.use('/', auth, require('./routes/index'));
-
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
@@ -58,6 +56,8 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use('/signout', signOut);
+
+app.use('/', auth, require('./routes/index'));
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Передан неправильный путь'));
