@@ -28,7 +28,14 @@ function login(req, res, next) {
     .catch(next);
 }
 
-const signOut = (req, res) => res.status(200).clearCookie('jwt').send({ message: 'jwt успешно удален' });
+const signOut = (req, res) => {
+  res.clearCookie('jwt', {
+    sameSite: 'none',
+    secure: true,
+  });
+
+  return res.status(200).send({ message: 'jwt успешно удален' });
+};
 
 function createUser(req, res, next) {
   const { name, email, password } = req.body;
