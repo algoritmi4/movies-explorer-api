@@ -30,7 +30,7 @@ const { PORT = 3001, DB_URL = 'mongodb://0.0.0.0:27017/bitfilmsdb' } = process.e
 
 const app = express();
 
-const whiteList = ['https://movies-finder.nomoreparties.sbs', 'localhost:3000'];
+const whiteList = ['https://movies-finder.nomoreparties.sbs', 'http://localhost:3000'];
 
 app.use(cors({ origin: whiteList, credentials: true }));
 app.use(cookieParser());
